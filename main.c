@@ -1,6 +1,7 @@
 #include <avr/io.h>
 #include <avr/pgmspace.h>
 #include <avr/interrupt.h>
+#include <avr/eeprom.h>
 #include "srom_3360_0x05.h"
 #include "usb_mouse.h"
 
@@ -170,6 +171,8 @@ static inline int8_t whl_read(void)
 	// toggle wheel led for ~25us after calling this function
 }
 
+uint8_t EEMEM stored_dpi_index = 1;
+
 int main(void)
 {
 	// set clock prescaler for 16MHz
@@ -207,8 +210,10 @@ int main(void)
 	union motion_data x_sum, y_sum; // total motion after last usb transmission
 	spi_init();
 	// dpi settings
-	uint8_t dpi_index = 1;
+	// uint8_t dpi_index = 1;
+	static uint8_t dpi_index;
 	uint8_t dpis[] = {3, 7, 15, 31, 63};
+	dpi_index = eeprom_read_byte(&stored_dpi_index);
 	pmw3360_init(dpis[dpi_index]);
 	// begin burst mode
 	SS_LOW;
@@ -356,8 +361,19 @@ int main(void)
 				UEDATX = y_sum.hi;
 				UEDATX = whl_notches; // wheel scrolls
 				UEINTX = 0x3a;
-				btn_prev = btn_dbncd;
+				// btn_prev = btn_dbncd;
 			}
 		}
+		// when dpi button is pressed cycle dpi and save changes in eeprom
+		if ((btn_dbncd & 0x20) && !(btn_prev & 0x20)) {
+			dpi_index = (dpi_index + 1) %
+					(sizeof(dpis)/sizeof(dpis[0]));
+			SS_LOW; delay_us(1);
+			spi_write(0x0f, dpis[dpi_index]);
+			SS_HIGH;
+			eeprom_write_byte(&stored_dpi_index, dpi_index);
+		}
+
+		btn_prev = btn_dbncd;
 	}
 }
