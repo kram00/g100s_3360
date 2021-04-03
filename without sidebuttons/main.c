@@ -364,6 +364,7 @@ int main(void)
 		// when dpi + right button is pressed cycle dpi and save changes in eeprom
 		// if ((btn_dbncd & 0x08) && !(btn_prev & 0x08)) {
 		if (!(PIND & (1<<1)) && !(PIND & (1<<3))) {
+			delay_ms(500);
 			dpi_index = (dpi_index + 1) %
 					(sizeof(dpis)/sizeof(dpis[0]));
 			SS_LOW; delay_us(1);
