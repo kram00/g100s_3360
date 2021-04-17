@@ -91,21 +91,28 @@ static inline uint8_t spi_read(const uint8_t addr)
 
 static void pmw3360_init(const uint8_t dpi)
 {
-	// drop and raise ncs to reset spi port (power-up step 2)
 	SS_HIGH;
-	delay_us(40);
+	delay_ms(3);
+
+	// shutdown first
+	SS_LOW;
+	spi_write(0x3b, 0xb6);
+	SS_HIGH;
+	delay_ms(300);
+
+	// drop and raise ncs to reset spi port
 	SS_LOW;
 	delay_us(40);
 	SS_HIGH;
 	delay_us(40);
 
-	// power up reset  (power-up step 3, 4)
+	// power up reset
 	SS_LOW;
 	spi_write(0x3a, 0x5a);
 	SS_HIGH;
 	delay_ms(50);
 
-	// read from 0x02 to 0x06 (power-up step 5)
+	// read from 0x02 to 0x06
 	SS_LOW;
 	spi_read(0x02);
 	spi_read(0x03);
@@ -113,16 +120,18 @@ static void pmw3360_init(const uint8_t dpi)
 	spi_read(0x05);
 	spi_read(0x06);
 
-	// srom download (power-up step 6)
-	spi_write(0x10, 0x00); // (srom step 2)
-	spi_write(0x13, 0x1d); // (srom step 3)
-	SS_HIGH;
-	delay_ms(10); // (srom step 4)
-	SS_LOW;
-	spi_write(0x13, 0x18); // (srom step 5)
+	spi_write(0x10, 0x00); // disable rest mode
+	spi_write(0x22, 0x00); // ???
 
-	spi_send(0x62 | 0x80); // (srom step 6)
+	// srom download
+	spi_write(0x13, 0x1d);
+	SS_HIGH;
+	delay_ms(10);
+	SS_LOW;
+	spi_write(0x13, 0x18);
+
 	const uint8_t *psrom = srom;
+	spi_send(0x62 | 0x80);
 	for (uint16_t i = 0; i < SROM_LENGTH; i++) {
 		delay_us(16);
 		spi_send(pgm_read_byte(psrom++));
@@ -133,11 +142,25 @@ static void pmw3360_init(const uint8_t dpi)
 
 	// configuration/settings
 	SS_LOW;
-	spi_write(0x10, 0x00); // no rest mode
-	spi_write(0x42, 0x00); // no angle snapping
+	spi_write(0x10, 0x00); // 0x00 disables rest mode use 0x20 for wireless
+	spi_write(0x14, 0xff); // how long to wait before going to rest mode. 0xff is max (~10 seconds)
+	spi_write(0x17, 0xff);
+	spi_write(0x18, 0x00);
+	spi_write(0x19, 0x00);
+	spi_write(0x1b, 0x00);
+	spi_write(0x1c, 0x00);
+	
+	// surface tuning default 
+	spi_write(0x2c, 0x0a);
+	spi_write(0x2b, 0x10);
+    // calibrated in logitech software with g pro (skypad)
+	// spi_write(0x2c, 0x34);
+	// spi_write(0x2b, 0xde);	
+
+	// configuration/settings
 	spi_write(0x0f, dpi);
+	spi_write(0x42, 0x00); // no angle snapping
 	spi_write(0x63, 0x02); // 2mm lod
-	spi_write(0x0d, 0x00); // 0 degree
 	SS_HIGH;
 }
 

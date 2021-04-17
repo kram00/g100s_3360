@@ -8,5 +8,4 @@ original code from https://gist.github.com/qsxcv/53c52e2bf6ed1f0b6c2a8a0d2121947
 
 
 <img src="https://raw.githubusercontent.com/kram00/g100s_3360/main/img/g100s_3360_1.jpg" width="50%" height="50%">
-<img src="https://raw.githubusercontent.com/kram00/g100s_3360/main/img/g100s_3360_2.jpg" width="50%" height="50%">
 <img src="https://raw.githubusercontent.com/kram00/g100s_3360/main/img/g100s_3360_3.jpg" width="50%" height="50%">
