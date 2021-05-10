@@ -38,6 +38,7 @@ union motion_data {
 static void pins_init(void)
 {
 	PORTD |= 0b00111111; // L, R, M, RSB, FSB, DPI pullup inputs on D0, D1, D2, D3, D4, D5. (active low)
+	PORTF |= 0b00000011;
 
 	EICRA = 0b01010101; // generate interrupt request on any edge of D0/D1/D2/D3
 	EIMSK = 0; // but don't enable any actual interrupts
@@ -195,6 +196,7 @@ static inline int8_t whl_read(void)
 }
 
 uint8_t EEMEM stored_dpi_index = 1;
+uint8_t btn_dbncd = 0x00;
 
 int main(void)
 {
@@ -331,7 +333,9 @@ int main(void)
 		//           0 |            1 |         =0 |          =1
 		//           1 |            0 |         ++ | (time < DEBOUNCE_TIME)
 		//           1 |            1 |         =0 |          =1
-		uint8_t btn_dbncd = 0x00;
+		// uint8_t btn_dbncd = 0x00;
+		btn_dbncd &= ~0b00111100;
+
 		// manual loop debouncing for every button
 		#define DEBOUNCE(index) \
 		if ((btn_prev & (1<<index)) && !(btn_raw & (1<<index))) { \
@@ -342,14 +346,32 @@ int main(void)
 			btn_time[index] = 0; \
 			btn_dbncd |= btn_raw & (1<<index); \
 		}
-		DEBOUNCE(0); // L
-		DEBOUNCE(1); // R
+		// DEBOUNCE(0); // L
+		// DEBOUNCE(1); // R
 		DEBOUNCE(2); // M
 		DEBOUNCE(3); // RSB
 		DEBOUNCE(4); // FSB
 		DEBOUNCE(5); // DPI
 		
 		#undef DEBOUNCE
+		
+	// hardware debouncing
+		//+left click
+		if (!(PIND & (1 << 0))) {
+			btn_dbncd |= (1<<0);
+		}
+		//-left click
+		if (!(PINF & (1 << 0))) { 
+			btn_dbncd &= ~(1<<0);
+		}
+		//+right click
+		if (!(PIND & (1 << 1))) {
+			btn_dbncd |= (1<<1);
+		}
+		//-right click
+		if (!(PINF & (1 << 1))) {
+			btn_dbncd &= ~(1<<1);
+		}
 
 	// usb
 		// first make sure it's configured
