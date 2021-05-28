@@ -252,7 +252,8 @@ int main(void)
 	// set up timer0 to set OCF0A in TIFR0 every 125us
 	TCCR0A = 0x02; // CTC
 	TCCR0B = 0x02; // prescaler 1/8 = 1us period
-	OCR0A = 124; // = 125 - 1
+	// OCR0A = 124; // = 125 - 1
+	OCR0A = 249; // = 16000000 / (8 * 8000) - 1 .. for 16mhz use 249
 
 	cli();
 	for (uint8_t i = 0; ; i = (i + 1) % 8) {
