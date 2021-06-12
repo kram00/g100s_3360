@@ -1,0 +1,29 @@
+order on lcsc:
+
+Samsung Electro-Mechanics CL21C220JBANNNC 22pF	2x	C1804
+YAGEO CC0805KRX7R9BB104 100nF			5x	C49678
+Samsung Electro-Mechanics CL21A475KAQNNNE 4.7uF	2x	C1779
+Samsung Electro-Mechanics CL21B105KBFNNNE 1uF	4x	C28323
+Uniroyal Elec 0805W8F1002T5E 10kΩ		1x	C17414
+Uniroyal Elec 0805W8F220JT5E 22Ω		2x	C17561
+Uniroyal Elec 0805W8F1500T5E 150Ω		1x	C17471
+Uniroyal Elec 0805W8F100JT5E 10Ω		1x	C17415
+Uniroyal Elec 0805W8F1001T5E 1kΩ		1x	C17513
+
+Uniroyal Elec 0805W8F390JT5E 39Ω		1x	C17659
+Microchip Tech ATMEGA32U4-AU C44854		1x	C44854
+Texas Instruments SN74LVC1T45DCKR		4x	C9382
+CITIZEN HC-49/U-S16000000ABJB			1x	C326538
+								
+-------------------------------------------------------------------------
+not available on lcsc:
+
+Texas Instruments TLV70019DDCR/TLV70019DDCT	1x	https://sinuss.nl/componenten/halfgeleiders-sensors/ics/voltage-regulators/ldo-voltage-regulators-adjustable/3007766-tlv70019ddct-ldo-reg-0175vdo-02a-19v-5sot23-texas-instruments
+PMW3360DM-T2QU + LM19-LSI			1x	https://aliexpress.com/item/32834829893.html
+kailh microswitch right angle			2x	https://aliexpress.com/item/32878186818.html
+micro switch 4mmx4mmx1.5mm			1x	https://aliexpress.com/item/32915426986.html
+ir led and detector				1x	recycle from g100s pcb or https://aliexpress.com/item/4000184464797.html
+jst-ph 5pin					1x	recycle from g100s pcb or https://aliexpress.com/item/32400992588.html
+								
+-------------------------------------------------------------------------
+
