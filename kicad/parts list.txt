@@ -20,7 +20,6 @@ not available on lcsc:
 
 Texas Instruments TLV70019DDCR/TLV70019DDCT	1x	https://sinuss.nl/componenten/halfgeleiders-sensors/ics/voltage-regulators/ldo-voltage-regulators-adjustable/3007766-tlv70019ddct-ldo-reg-0175vdo-02a-19v-5sot23-texas-instruments
 PMW3360DM-T2QU + LM19-LSI			1x	https://aliexpress.com/item/32834829893.html
-kailh microswitch right angle			2x	https://aliexpress.com/item/32878186818.html
 micro switch 4mmx4mmx1.5mm			1x	https://aliexpress.com/item/32915426986.html
 ir led and detector				1x	recycle from g100s pcb or https://aliexpress.com/item/4000184464797.html
 jst-ph 5pin					1x	recycle from g100s pcb or https://aliexpress.com/item/32400992588.html
