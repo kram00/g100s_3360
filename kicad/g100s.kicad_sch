@@ -2886,7 +2886,7 @@
     (in_bom yes) (on_board yes)
     (uuid "3cf9d49c-4280-4935-91dd-091ba0db3f85")
     (property "Reference" "C9" (id 0) (at 67.31 170.18 0))
-    (property "Value" "4.7uF" (id 1) (at 66.04 172.72 0))
+    (property "Value" "100nF" (id 1) (at 66.04 172.72 0))
     (property "Footprint" "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder" (id 2) (at 70.1548 168.91 0)
       (effects (font (size 1.27 1.27)) hide)
     )
@@ -3296,7 +3296,7 @@
       (reference "C8") (unit 1) (value "1uF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
     )
     (path "/3cf9d49c-4280-4935-91dd-091ba0db3f85"
-      (reference "C9") (unit 1) (value "4.7uF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
+      (reference "C9") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
     )
     (path "/9ba8c4fb-6341-40cf-ac2f-0aaab8912fb1"
       (reference "C10") (unit 1) (value "1uF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
