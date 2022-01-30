@@ -18,7 +18,7 @@ CITIZEN HC-49/U-S16000000ABJB			1x	C326538
 -------------------------------------------------------------------------
 not available on lcsc:
 
-Texas Instruments TLV70019DDCR			1x	https://aliexpress.com/item/1005002065648543.html
+Texas Instruments TLV70019DDCR			1x	https://aliexpress.com/item/1005003054170479.html
 PMW3360DM-T2QU + LM19-LSI			1x	https://aliexpress.com/item/32834829893.html
 micro switch 4mmx4mmx1.5mm			1x	https://aliexpress.com/item/32915426986.html
 ir led and detector				1x	recycle from g100s pcb or https://aliexpress.com/item/4000184464797.html

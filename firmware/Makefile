@@ -41,7 +41,7 @@
 
 
 # Target file name (without extension).
-TARGET = g100s_sidebuttons
+TARGET = g100s
 
 
 # List C source files here. (C dependencies are automatically generated.)

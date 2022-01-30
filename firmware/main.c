@@ -38,7 +38,7 @@ union motion_data {
 static void pins_init(void)
 {
 	PORTD |= 0b00111111; // L, R, M, RSB, FSB, DPI pullup inputs on D0, D1, D2, D3, D4, D5. (active low)
-	PORTF |= 0b00000011;
+	PORTF |= 0b11110011;
 
 	EICRA = 0b01010101; // generate interrupt request on any edge of D0/D1/D2/D3
 	EIMSK = 0; // but don't enable any actual interrupts
@@ -150,13 +150,13 @@ static void pmw3360_init(const uint8_t dpi)
 	spi_write(0x19, 0x00);
 	spi_write(0x1b, 0x00);
 	spi_write(0x1c, 0x00);
-	
-	// surface tuning default 
+
+	// surface tuning default
 	spi_write(0x2c, 0x0a);
 	spi_write(0x2b, 0x10);
     // calibrated in logitech software with g pro (skypad)
 	// spi_write(0x2c, 0x34);
-	// spi_write(0x2b, 0xde);	
+	// spi_write(0x2b, 0xde);
 
 	// configuration/settings
 	spi_write(0x0f, dpi);
@@ -200,6 +200,9 @@ uint8_t btn_dbncd = 0x00;
 
 int main(void)
 {
+	MCUCR |= _BV(JTD);
+	MCUCR |= _BV(JTD); //disable Port F jtag by writing bit twice within 4 cycles.
+
 	// set clock prescaler for 16MHz
 	CLKPR = 0x80;
 	CLKPR = 0x00;
@@ -211,13 +214,14 @@ int main(void)
 	uint8_t btn_prev = (~PIND) & 0b00111111; // read L, R, M, RSB, FSB, DPI
 	// time (in 125us) button has been unpressed.
 	// consider button to be released if this time exceeds DEBOUNCE_TIME.
-	uint8_t btn_time[6] = {0, 0, 0, 0, 0, 0};
+	// uint8_t btn_time[6] = {0, 0, 0, 0, 0, 0};
 
 	// if dpi button is pressed when plugging in, jump to bootloader
 	// see https://www.pjrc.com/teensy/jump_to_bootloader.html
 	delay_ms(50);
 	if (!(PIND & (1<<5)))
-		__asm__ volatile ("jmp 0x7e00");
+		__asm__ volatile ("jmp 0x7000"); //atmel-dfu
+		//__asm__ volatile ("jmp 0x7e00"); // teensy2.0 
 
 	// wheel
 	WHL_LED_ON; // initial pulse for first read
@@ -319,8 +323,8 @@ int main(void)
 		//PIND 0 EIFR 1: low, edge -> is low
 		//PIND 1 EIFR 0: high, no edges -> always high during last 125us
 		//PIND 1 EIFR 1: high, edge -> low at some point in the last 125us
-		const uint8_t btn_raw = (~PIND) | EIFR;
-		EIFR = 0b00001111; // clear EIFR
+		// const uint8_t btn_raw = (~PIND) | EIFR;
+		// EIFR = 0b00001111; // clear EIFR
 
 		// button debouncing logic
 		//          >input<           |        >output<
@@ -335,10 +339,9 @@ int main(void)
 		//           1 |            0 |         ++ | (time < DEBOUNCE_TIME)
 		//           1 |            1 |         =0 |          =1
 		// uint8_t btn_dbncd = 0x00;
-		btn_dbncd &= ~0b00111100;
 
-		// manual loop debouncing for every button
-		#define DEBOUNCE(index) \
+		// // manual loop debouncing for every button
+		/* #define DEBOUNCE(index) \
 		if ((btn_prev & (1<<index)) && !(btn_raw & (1<<index))) { \
 			btn_time[index]++; \
 			if (btn_time[index] < DEBOUNCE_TIME) \
@@ -346,23 +349,23 @@ int main(void)
 		} else { \
 			btn_time[index] = 0; \
 			btn_dbncd |= btn_raw & (1<<index); \
-		}
+		}*/
 		// DEBOUNCE(0); // L
 		// DEBOUNCE(1); // R
-		DEBOUNCE(2); // M
-		DEBOUNCE(3); // RSB
-		DEBOUNCE(4); // FSB
-		DEBOUNCE(5); // DPI
-		
-		#undef DEBOUNCE
-		
+		// DEBOUNCE(2); // M
+		// DEBOUNCE(3); // RSB
+		// DEBOUNCE(4); // FSB
+		// DEBOUNCE(5); // DPI
+
+		// #undef DEBOUNCE
+
 	// hardware debouncing
 		//+left click
 		if (!(PIND & (1 << 0))) {
 			btn_dbncd |= (1<<0);
 		}
 		//-left click
-		if (!(PINF & (1 << 0))) { 
+		if (!(PINF & (1 << 0))) {
 			btn_dbncd &= ~(1<<0);
 		}
 		//+right click
@@ -372,6 +375,38 @@ int main(void)
 		//-right click
 		if (!(PINF & (1 << 1))) {
 			btn_dbncd &= ~(1<<1);
+		}
+		//+middle click
+		if (!(PIND & (1 << 2))) {
+			btn_dbncd |= (1<<2);
+		}
+		//-middle click
+		if (!(PINF & (1 << 4))) {
+			btn_dbncd &= ~(1<<2);
+		}
+		//+rsb click
+		if (!(PIND & (1 << 3))) {
+			btn_dbncd |= (1<<3);
+		}
+		//-rsb click
+		if (!(PINF & (1 << 5))) {
+			btn_dbncd &= ~(1<<3);
+		}
+		//+fsb click
+		if (!(PIND & (1 << 4))) {
+			btn_dbncd |= (1<<4);
+		}
+		//-fsb click
+		if (!(PINF & (1 << 6))) {
+			btn_dbncd &= ~(1<<4);
+		}
+		//+dpi click
+		if (!(PIND & (1 << 5))) {
+			btn_dbncd |= (1<<5);
+		}
+		//-dpi click
+		if (!(PINF & (1 << 7))) {
+			btn_dbncd &= ~(1<<5);
 		}
 
 	// usb
