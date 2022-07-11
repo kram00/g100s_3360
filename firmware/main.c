@@ -37,8 +37,8 @@ union motion_data {
 
 static void pins_init(void)
 {
-	PORTD |= 0b00111111; // L, R, M, RSB, FSB, DPI pullup inputs on D0, D1, D2, D3, D4, D5. (active low)
-	PORTF |= 0b11110011;
+	PORTD |= 0b00001111; // L, R, M, DPI pullup inputs on D0, D1, D2, D5. (active low)
+	PORTF |= 0b00110011;
 
 	EICRA = 0b01010101; // generate interrupt request on any edge of D0/D1/D2/D3
 	EIMSK = 0; // but don't enable any actual interrupts
@@ -211,10 +211,10 @@ int main(void)
 
 	// previous state to compare against for debouncing
 	// uint8_t btn_prev = (~PIND) & 0x03; // read L+R
-	uint8_t btn_prev = (~PIND) & 0b00111111; // read L, R, M, RSB, FSB, DPI
+	uint8_t btn_prev = (~PIND) & 0b00001111; // read L, R, M, DPI
 	// time (in 125us) button has been unpressed.
 	// consider button to be released if this time exceeds DEBOUNCE_TIME.
-	// uint8_t btn_time[6] = {0, 0, 0, 0, 0, 0};
+	// uint8_t btn_time[4] = {0, 0, 0, 0};
 
 	// if dpi button is pressed when plugging in, jump to bootloader
 	// see https://www.pjrc.com/teensy/jump_to_bootloader.html
@@ -384,29 +384,13 @@ int main(void)
 		if (!(PINF & (1 << 4))) {
 			btn_dbncd &= ~(1<<2);
 		}
-		//+rsb click
+		//+dpi click
 		if (!(PIND & (1 << 3))) {
 			btn_dbncd |= (1<<3);
 		}
-		//-rsb click
+		//-dpi click
 		if (!(PINF & (1 << 5))) {
 			btn_dbncd &= ~(1<<3);
-		}
-		//+fsb click
-		if (!(PIND & (1 << 4))) {
-			btn_dbncd |= (1<<4);
-		}
-		//-fsb click
-		if (!(PINF & (1 << 6))) {
-			btn_dbncd &= ~(1<<4);
-		}
-		//+dpi click
-		if (!(PIND & (1 << 5))) {
-			btn_dbncd |= (1<<5);
-		}
-		//-dpi click
-		if (!(PINF & (1 << 7))) {
-			btn_dbncd &= ~(1<<5);
 		}
 
 	// usb
@@ -445,8 +429,10 @@ int main(void)
 				// btn_prev = btn_dbncd;
 			}
 		}
-		// when dpi button is pressed cycle dpi and save changes in eeprom
-		if ((btn_dbncd & 0x20) && !(btn_prev & 0x20)) {
+		// when dpi and right button is pressed cycle dpi and save changes in eeprom
+		// if ((btn_dbncd & 0x20) && !(btn_prev & 0x20)) {
+		if (!(PIND & (1<<1)) && !(PIND & (1<<5))) {
+			delay_ms(500);
 			dpi_index = (dpi_index + 1) %
 					(sizeof(dpis)/sizeof(dpis[0]));
 			SS_LOW; delay_us(1);
